@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment QR Generator</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: #f7f7f7;
+      margin-top: 50px;
+    }
+    .container {
+      background: white;
+      display: inline-block;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    input, button {
+      margin: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+    #qrcode {
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>💰 Generate Payment QR</h2>
+    <input type="number" id="amount" placeholder="Enter amount (₹)" min="1" />
+    <input type="text" id="name" placeholder="Receiver Name" />
+    <button onclick="generateQR()">Generate QR Code</button>
+    <div id="qrcode"></div>
+  </div>
+
+  <!-- QR Code library -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
+
+  <script>
+    function generateQR() {
+      const amount = document.getElementById('amount').value;
+      const name = document.getElementById('name').value || 'Merchant';
+      const qrDiv = document.getElementById('qrcode');
+      qrDiv.innerHTML = ''; // Clear previous QR
+
+      if (!amount || amount <= 0) {
+        alert('Please enter a valid amount.');
+        return;
+      }
+
+      // ✅ Example UPI link (replace with your real UPI ID)
+      const upiID = "9644923147-4@ybl";
+      const note = encodeURIComponent("Payment to " + name);
+      const upiLink = `upi://pay?pa=${upiID}&pn=${encodeURIComponent(name)}&am=${amount}&cu=INR&tn=${note}`;
+
+      // Generate QR
+      new QRCode(qrDiv, {
+        text: upiLink,
+        width: 200,
+        height: 200,
+        colorDark: "#000000",
+        colorLight: "#ffffff"
+      });
+
+      // Show link (optional)
+      const link = document.createElement('p');
+      link.innerHTML = `<br><a href="${upiLink}" target="_blank">Or click here to pay ₹${amount}</a>`;
+      qrDiv.appendChild(link);
+    }
+  </script>
+</body>
+</html>
